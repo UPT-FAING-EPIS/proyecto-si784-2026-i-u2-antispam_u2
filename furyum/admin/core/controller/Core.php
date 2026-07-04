@@ -1,0 +1,67 @@
+<?php
+
+
+// 14 de Abril del 2014
+// Core.php
+// @brief obtiene las configuraciones, muestra y carga los contenidos necesarios.
+
+class Core {
+
+	public static $debug_sql = false;
+	public static $user;
+	public static $contrato_agua_start=10000;
+
+	public static function includeCSS(){
+		$path = "res/css/";
+		$handle=opendir($path);
+		if($handle){
+			while (false !== ($entry = readdir($handle)))  {
+				if($entry!="." && $entry!=".."){
+					$fullpath = $path.$entry;
+				if(!is_dir($fullpath)){
+						echo "<link rel='stylesheet' type='text/css' href='".$fullpath."' />";
+
+					}
+				}
+			}
+		closedir($handle);
+		}
+
+	}
+
+	public static function redir($url){
+		echo "<script>window.location='".$url."';</script>";
+	}
+
+	public static function alert($txt){
+		echo "<script>alert('".$txt."');</script>";
+	}
+
+	public static function includeJS(){
+		$path = "res/js/";
+		$handle=opendir($path);
+		if($handle){
+			while (false !== ($entry = readdir($handle)))  {
+				if($entry!="." && $entry!=".."){
+					$fullpath = $path.$entry;
+				if(!is_dir($fullpath)){
+						echo "<script type='text/javascript' src='".$fullpath."'></script>";
+
+					}
+				}
+			}
+		closedir($handle);
+		}
+
+	}
+
+	public static function clean($str){
+		$con = Database::getCon();
+		return mysqli_real_escape_string($con, strip_tags($str));
+	}
+
+}
+
+
+
+?>

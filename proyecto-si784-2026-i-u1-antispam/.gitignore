@@ -1,0 +1,48 @@
+# Laravel / App
+src/.env
+src/.env.*.local
+src/vendor/
+src/node_modules/
+src/public/hot
+src/public/storage
+src/storage/*.key
+src/storage/app/
+src/storage/logs/
+src/storage/framework/
+src/bootstrap/cache/*.php
+src/.phpunit.result.cache
+src/coverage-report/
+src/coverage.xml
+src/test-report.xml
+
+# Terraform
+infrastructure/terraform/.terraform/
+infrastructure/terraform/*.tfstate
+infrastructure/terraform/*.tfstate.backup
+infrastructure/terraform/.terraform.lock.hcl
+infrastructure/terraform/terraform.tfvars
+infrastructure/terraform/override.tf
+infrastructure/terraform/crash.log
+
+# Docker
+.env
+*.env.local
+
+# IDEs
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Composer
+src/composer.phar
+
+# Generated
+src/graph.png

@@ -1,0 +1,41 @@
+services:
+  app:
+    build: .
+    container_name: furyum_app
+    ports:
+      - "8082:80"
+    volumes:
+      - ./:/var/www/html/
+    environment:
+      - DB_HOST=db
+      - DB_USER=furyum_user
+      - DB_PASS=furyum_pass
+      - DB_NAME=furyum
+      - ANTISPAM_API_URL=http://86.48.24.230:8000/api/v1/public/spam-check
+      - ANTISPAM_API_KEY=aegis_4GElgWPsFWgGw5MD9NT-rDkLpkYeNARiCNJprcxk4nc
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0
+    container_name: furyum_db
+    environment:
+      - MYSQL_DATABASE=furyum
+      - MYSQL_USER=furyum_user
+      - MYSQL_PASSWORD=furyum_pass
+      - MYSQL_ROOT_PASSWORD=root_pass
+    ports:
+      - "3308:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./schema.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-u", "root", "-proot_pass"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  db_data:
