@@ -1,0 +1,69 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: aegis_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${DB_NAME:-aegis_db}
+      MYSQL_USER: ${DB_USER:-aegis}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-aegispassword}
+    ports:
+      - "3307:3306"
+    volumes:
+      - aegis_db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: aegis_backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-aegis_db}
+      DB_USER: ${DB_USER:-aegis}
+      DB_PASSWORD: ${DB_PASSWORD:-aegispassword}
+      SECRET_KEY: ${SECRET_KEY:-change-this-secret-key-in-production}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-http://localhost:3000}
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    container_name: aegis_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-change-this-nextauth-secret}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+      API_URL: http://backend:8000
+    ports:
+      - "3000:3000"
+
+  adminer:
+    image: adminer:latest
+    container_name: aegis_adminer
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - "8888:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+
+volumes:
+  aegis_db_data:

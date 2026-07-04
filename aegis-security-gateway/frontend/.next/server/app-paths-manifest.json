@@ -1,0 +1,8 @@
+{
+  "/register/page": "app/register/page.js",
+  "/antispam/page": "app/antispam/page.js",
+  "/login/page": "app/login/page.js",
+  "/admin/users/page": "app/admin/users/page.js",
+  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
+  "/scanner/page": "app/scanner/page.js"
+}
